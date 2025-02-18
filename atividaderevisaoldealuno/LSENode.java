@@ -1,3 +1,5 @@
+package atividaderevisaoldealuno;
+
 public class LSENode{
     private Aluno info;
     private LSENode prox;

@@ -1,3 +1,5 @@
+package atividaderevisaoldealuno;
+
 import java.util.Scanner;
 
 public class App {

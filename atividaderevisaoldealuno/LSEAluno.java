@@ -1,3 +1,5 @@
+package atividaderevisaoldealuno;
+
 public class LSEAluno{
 
     private LSENode inicio;

@@ -1,4 +1,6 @@
-public class Aluno{
+package atividaderevisaoldealuno;
+
+public class Aluno {
     
     private String matricula;
     private String nome;
@@ -45,5 +47,5 @@ public class Aluno{
     public int compareTo(Aluno alunocomparado ){
         return this.matricula.compareTo(alunocomparado.matricula);
     }
-
 }
+
