@@ -10,6 +10,11 @@ public class Tarefa implements Comparable<Tarefa>{
         this.prioridade = prioridade;
     }
 
+    public Tarefa(String descricao){
+        this.descricao = descricao;
+        this.prioridade = 0;
+    }
+
     public String getDescricao() {
         return descricao;
     }
