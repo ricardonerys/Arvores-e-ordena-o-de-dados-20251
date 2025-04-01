@@ -1,3 +1,4 @@
+package AplicaçãoABB;
 import ABBGenerica.ABB;
 import DADOS.Aluno;
 
@@ -17,8 +18,6 @@ public class App {
         abbteste.insert(alteste4);
         abbteste.insert(alteste5);
         abbteste.insert(alteste6);
-        abbteste.exibirmenor();
-        abbteste.exibirmaior();
         
     }
 }

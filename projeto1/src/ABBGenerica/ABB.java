@@ -10,7 +10,7 @@ public class ABB <T extends Comparable <T>> {
         return false;
     }
     
-    public ABBNode <T> funcao(T valor){ //funcao de busca
+    public ABBNode <T> busca(T valor){ //funcao de busca
         
         int retorno;
 
@@ -95,58 +95,20 @@ public class ABB <T extends Comparable <T>> {
 
     }
 
-    private ABBNode<T> menorvalor(){
+
+    public void emOrdem () {
+        if (this.isEmpty() == true) {
+        System.out.println("Árvore vazia");
+        } else {
+        this.percorrerEmOrdem (this.root);
+        }
+        }
     
-        if (this.root != null) {
-            ABBNode <T> aux = this.root;
-            while(true){
-
-                if(aux.getLeft() != null){
-                    aux = aux.getLeft();
-                }else{
-                    return aux;
-                }  
-            }  
-        }else{
-            return null;
-        }
-    }
-
-    private ABBNode<T> maiorvalor(){
-    
-        if (this.root != null) {
-            ABBNode <T> aux = this.root;
-            while(true){
-
-                if(aux.getRight() != null){
-                    aux = aux.getRight();
-                }else{
-                    return aux;
-                }  
-            }  
-        }else{
-            return null;
-        }
-    }
-
-    public void exibirmenor(){
-        
-        if(menorvalor() != null){
-            ABBNode<T> menor = menorvalor();
-            
-            System.out.println(menor.getInfo().toString());
-        }else{
-            System.out.println("arvore vazia!!");
-        }
-    }
-
-    public void exibirmaior(){
-        
-        if(maiorvalor() != null){
-            ABBNode<T> maior = maiorvalor();
-            System.out.println( maior.getInfo().toString());
-        }else{
-            System.out.println("arvore vazia!!");
+    private void percorrerEmOrdem (ABBNode<T> r) {
+        if (r != null) {
+        percorrerEmOrdem (r.getLeft());
+        System.out.println(r.getInfo().toString());
+        percorrerEmOrdem (r.getRight());
         }
     }
 }
