@@ -187,67 +187,83 @@ public class AVLTree<T extends Comparable <T>> {
     }
 
     private AVLNode<T> removeNode(AVLNode<T> raiz, T valor){
-        if(raiz != null){
-            int resultado = valor.compareTo(raiz.getInfo());
-            if(resultado == 0){
-                if(raiz.getLeft() == null && raiz.getRight() == null){
+        if(raiz != null){                                                   //verifica se arvore esta vazia
+            int resultado = valor.compareTo(raiz.getInfo());                
+            if(resultado == 0){                                             //se encontrar o valor correto
+                if(raiz.getLeft() == null && raiz.getRight() == null){      //remocao de um nó sem filhos: para eles, os fatbals e rotacoe foram feitos apos a chamada da recursão
                     raiz = null;
                     
-
-
-
                 }
-                else if(raiz.getLeft() == null){
+                else if(raiz.getLeft() == null){                            //remocao de um no comm apenas um filho: o ajuste apos a chamada da recursao tambem resolveu este caso
                     raiz = raiz.getRight();
                 } 
                 else if(raiz.getRight() == null){
                     raiz = raiz.getLeft();
                 }
-                else {
-                    
+                else {                                                      //remocao de no com 2 filhos. consegui ajustar os fatores utilizando uma fila que armazena todos os pais anteriores e ajusta os fatbals se necessario
+
                     AVLNode<T> pai, filho;
                     pai = raiz;
                     filho = pai.getLeft();
-                    if(filho.getRight() != null){
-                        while(filho.getRight() != null){
+                    if(filho.getRight() != null){                           //daqui em diante o codigo comeca a se diferenciar do remover da abbgenerica
+
+                        Queue<AVLNode<T>> fila = new Queue<>();             //fila criada para receber os pais anteriores até chegar no final
+
+                        while(filho.getRight() != null){                    //while semelhante ao que tem no remover da classe abbgenerica, com o adicional de enfilerar os pais anteriores
                             pai = filho;
                             filho = filho.getRight();
+                                                                            //provavel uso de fila para referencias de pais anteriores
+                            
+                            fila.enqueue(pai);                              //enfilerando os pais
                         }
-                        pai.setRight(filho.getLeft());
+                        pai.setRight(filho.getLeft());                      //remove referencia do filho
+
+                        fila.dequeue();                                     //desenfilera o pai final que ja esta em posicao
+                        pai.setFatBal(pai.getFatBal()-1);                   //ajusta o fatbal do pai final
+
+                        if(pai.getFatBal()<-1){                             //descobri um padrao que: o pai final SEMPRE muda o fatball decrementando 1. isso gera algumas possibilidades
+                            pai = this.rotateRight(pai);                    //para o caso de apos o decremento, seja identificado um desbalanceamento 
+                        }
+
+                        if(pai.getFatBal()==0){                             //para o caso do pai final for zero depois do decremento.se acontecer, é necessario decrenebtar os pais anteriores
+                            while(!fila.isEmpty()){                         //utilizando fila que foram armazenadas as referencias dos pais anteriores
+                                AVLNode<T> paiant = fila.dequeue();
+                                paiant.setFatBal(paiant.getFatBal()-1);
+                            }
+                        } 
                     }
-                    else {
-                        pai.setLeft(filho.getLeft());
+                    else {                                                  //para o caso de nao precisar entrar no while. aqui o pai nao muda e é sempre o mesmo desde o inicio
+                        pai.setLeft(filho.getLeft());                       
+                        pai.setFatBal(pai.getFatBal()+1);                   //nesse caso sempre vai incrementar o fatball em 1
+                        if(pai.getFatBal()>1){                              //caso identifique algum desbalanceamento
+                            raiz = this.rotateLeft(raiz);
+                        }
                     }
-                    raiz.setInfo(filho.getInfo());
+                    raiz.setInfo(filho.getInfo());                          //passando a info para o no "raiz"(o no que foi identificado o valor a se remover)
                 }
             } 
-            else if(resultado < 0){
+            else if(resultado < 0){                                         //parte referente a remocao dos nós com apenas um filho ou nenhum
 
 
-                int fbfilhoant=0;
+                int fbfilhoant=0;                                           
 
                 if(raiz.getLeft()!=null){
-                    fbfilhoant=raiz.getLeft().getFatBal();
+                    fbfilhoant=raiz.getLeft().getFatBal();                  //guardando o fatbal do filho antes da recursao
                 }
 
-                raiz.setLeft(removeNode(raiz.getLeft(), valor));
+                raiz.setLeft(removeNode(raiz.getLeft(), valor));            //chamada da recursão
 
-                if(raiz.getLeft()!=null){
-                    if((raiz.getLeft().getFatBal()!=fbfilhoant && raiz.getLeft().getFatBal() == 0)){
-                        
-                        raiz.setFatBal(raiz.getFatBal()+1);
-                        System.out.println("ajustando fatbal de: "+ raiz.getInfo() + "para " + raiz.getFatBal());
+                if(raiz.getLeft()!=null){                                   
+                    if((raiz.getLeft().getFatBal()!=fbfilhoant && raiz.getLeft().getFatBal() == 0)){    
+                                                                            //encontrei um padrao: sempre que o no é removido a esquerda, o fatbal do pai incrementa em 1
+                        raiz.setFatBal(raiz.getFatBal()+1);                 //outro padrao: na volta da recursao, se for identificado que o fatbal do filho mudou especificamente para 0,incremento ao pai em 1
+                                                                            
                     }
                 }else{
-                    
+                                                                            //mesmo ajuste de fatbal, mas para os pais que tiveram os filhos removidos
                     raiz.setFatBal(raiz.getFatBal()+1);
-                    System.out.println("ajustando fatbal de: "+ raiz.getInfo() + "para " + raiz.getFatBal());
                 }
-
-
-                if(raiz.getFatBal()>1){
-                    //rotaciona
-                    System.out.println(raiz.getInfo()+"desbalanceado");
+                if(raiz.getFatBal()>1){                                     //rotaciona caso passe do limite do balanceamento
                     raiz = this.rotateLeft(raiz);
                 }
                
@@ -255,32 +271,25 @@ public class AVLTree<T extends Comparable <T>> {
 
             } 
             else {
-                
+                                                                            //nessa parte sigo com a mesma logica, só que invertida para os nós removidos pela direita
                 int fbfilhoant=0;
 
                 if(raiz.getRight()!=null){
                     fbfilhoant=raiz.getRight().getFatBal();
                 }
                 
-
                 raiz.setRight(removeNode(raiz.getRight(), valor));
                 
                 if(raiz.getRight()!=null){
                     if((raiz.getRight().getFatBal()!=fbfilhoant && raiz.getRight().getFatBal() == 0)){
                         
                         raiz.setFatBal(raiz.getFatBal()-1);
-                        System.out.println("ajustando fatbal de: "+ raiz.getInfo() + "para " + raiz.getFatBal());
                     }
                 }else{
                     
                     raiz.setFatBal(raiz.getFatBal()-1);
-                    System.out.println("ajustando fatbal de: "+ raiz.getInfo() + "para " + raiz.getFatBal());
                 }
-
-
                 if(raiz.getFatBal()<-1){
-                    //rotaciona
-                    System.out.println(raiz.getInfo()+"desbalanceado");
                     raiz = this.rotateRight(raiz);
                 }
                
@@ -288,6 +297,6 @@ public class AVLTree<T extends Comparable <T>> {
 
             }
         }
-        return raiz;
+        return raiz;                                               //por fim, retorna a "raiz", para voltar da recursao
     }
 }
